@@ -1,7 +1,55 @@
 @page "/"
+@inject DsmrService _dsmrService
+@implements IDisposable
 
-<h1>Hello, world!</h1>
+<h1 class="text-center">P1 Web</h1>
+    
+<RadzenRadialGauge Style="width: 100%; height: 300px;">
+    <RadzenRadialGaugeScale StartAngle="-150" EndAngle="150" Step="1" Min="-4" Max="8" TickPosition="GaugeTickPosition.Outside">
+        @if (_telegram != null)
+        {
+            <RadzenRadialGaugeScalePointer Value=@_guage Length="0.6" ShowValue="true">
+                <Template Context="pointer">
+                    @if (_guage < 0)
+                    {
+                        <h4 class="text-success">
+                            @_guage <sup>kW</sup>
+                        </h4>
+                    }
+                    else
+                    {
+                        <h4>
+                            @_guage <sup>kW</sup>
+                        </h4>
+                    }
+                </Template>
+            </RadzenRadialGaugeScalePointer>
+        }
+        <RadzenRadialGaugeScaleRange From="-4" To="0" Fill="green"/>
+    </RadzenRadialGaugeScale>
+</RadzenRadialGauge>
 
-Welcome to your new app.
+@code
+{
+    private P1Telegram _telegram;
+    private double _guage;
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+    public async Task Update(P1Telegram t)
+    {
+        _telegram = t;
+        
+        if (_telegram != null) _guage = _telegram.ElectricityDelivered - _telegram.ElectricityReceived;
+        
+        await InvokeAsync(StateHasChanged);
+    }
+
+    protected override void OnInitialized()
+    {
+        _dsmrService.Callbacks.Add(Update);
+    }
+
+    public void Dispose()
+    {
+        _dsmrService.Callbacks.Remove(Update);
+    }
+}
