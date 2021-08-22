@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
 
@@ -23,9 +24,11 @@ namespace P1Dash
             _timer.Enabled = true;
         }
 
-        private void Interval(object source, ElapsedEventArgs e)
+        private void Interval(object? source, ElapsedEventArgs e)
         {
             var telegram = _provider.Read();
+
+            if (telegram == null) return;
             
             foreach (var callback in Callbacks.ToList())
             {

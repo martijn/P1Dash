@@ -17,7 +17,7 @@ namespace P1Dash
             _data = new StreamReader(new NetworkStream(_client.Client));
         }
 
-        public P1Telegram Read()
+        public P1Telegram? Read()
         {
             var message = FetchMessage();
 
@@ -63,6 +63,8 @@ namespace P1Dash
             {
                 var line = _data.ReadLine();
 
+                if (line == null) continue;
+                
                 if (line.StartsWith("/") || telegram.Length > 0)
                 {
                     telegram += line + "\n";
