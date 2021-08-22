@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using P1Dash;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,8 +11,16 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
-var dsmrService = new DsmrService();
-builder.Services.AddSingleton<DsmrService>(dsmrService);
+// TODO
+// Determine what source to use and add corresponding IDsmrProvider
+// DsmrService gets IDsmrProvider from DI container
+// No more temp serviceProvider for logging necessary
+
+using (var serviceProvider = builder.Services.BuildServiceProvider())
+{
+    var dsmrService = new DsmrService(serviceProvider.GetService<ILogger<DsmrService>>());
+    builder.Services.AddSingleton<DsmrService>(dsmrService);
+}
 
 var app = builder.Build();
 
