@@ -1,11 +1,11 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
 using Microsoft.Extensions.Logging;
+using P1Dash.Dsmr;
 
-namespace P1Dash
+namespace P1Dash.Services
 {
     public class DsmrService
     {

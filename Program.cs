@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using P1Dash;
+using P1Dash.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

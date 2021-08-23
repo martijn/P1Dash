@@ -1,4 +1,4 @@
-namespace P1Dash
+namespace P1Dash.Dsmr
 {
     public class P1Telegram
     {

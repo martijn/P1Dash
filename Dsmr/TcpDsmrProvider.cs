@@ -1,23 +1,19 @@
 using System;
 using System.IO;
-using System.IO.Ports;
 using System.Net.Sockets;
 using System.Text.RegularExpressions;
-using System.Xml.Linq;
 
-namespace P1Dash
+namespace P1Dash.Dsmr
 {
-    public class SerialDsmrProvider : IDsmrProvider
+    public class TcpDsmrProvider : IDsmrProvider
     {
-        private SerialPort _port;
+        private TcpClient _client;
+        private StreamReader _data;
         
-        public SerialDsmrProvider()
+        public TcpDsmrProvider()
         {
-            _port = new SerialPort("/dev/ttyUSB0", 115200);
-            //_port = new SerialPort("/dev/cu.usbserial-A640HB4X", 115200);
-            _port.ReadTimeout = 1000;
-            _port.RtsEnable = true;
-            _port.Open();
+            _client = new TcpClient("interface.fritz.box", 2001);
+            _data = new StreamReader(new NetworkStream(_client.Client));
         }
 
         public P1Telegram? Read()
@@ -64,17 +60,7 @@ namespace P1Dash
 
             do
             {
-                string? line;
-
-                try
-                {
-                    line = _port.ReadLine();
-                }
-                catch (TimeoutException e)
-                {
-                    Console.WriteLine("Timeout while reading from serial port");
-                    line = null;
-                }
+                var line = _data.ReadLine();
 
                 if (line == null) continue;
                 
