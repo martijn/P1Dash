@@ -1,10 +1,10 @@
 # P1 Dash
 
-![Screen shot showing a guage based on P1 data](screenshot.png)
+![Screen shot showing a guage based on P1 data](screenshot.gif)
 
 A simple web interface for the Dutch Smart Meter reader (DSMR/ESMR v5).
-Right now it does only one thing; display a guage to show your the current
-power consumed from or fed back to the grid.
+Right now it does only one thing; display a guage to show you the
+power consumed from or fed back to the grid in real time.
 
 ## Run with Docker
 
