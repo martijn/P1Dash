@@ -17,47 +17,11 @@ namespace P1Dash.Dsmr
             _port.Open();
         }
 
-        public P1Telegram? Read()
-        {
-            var message = FetchMessage();
-
-            var telegram = new P1Telegram();
-
-            var deliveredMatch = Regex.Match(message, @"1-0:1\.7\.0\(([\d\.]+)\*kW\)");
-
-            if (deliveredMatch.Success)
-            {
-                telegram.ElectricityDelivered = Double.Parse(deliveredMatch.Groups[1].Value);
-            }
-            else
-            {
-                Console.WriteLine("Didn't find energy delivered segment in P1 message");
-                return null;
-            }
-            
-            var receivedMatch = Regex.Match(message, @"1-0:2\.7\.0\(([\d\.]+)\*kW\)");
-
-            if (receivedMatch.Success)
-            {
-                telegram.ElectricityReceived = Double.Parse(receivedMatch.Groups[1].Value);
-            }
-            else
-            {
-                Console.WriteLine("Didn't find energy received segment in P1 message");
-                return null;
-            }
-
-            return telegram;
-        }
+        public P1Telegram? Read() => new P1Telegram(FetchMessage());
         
         private string FetchMessage()
         {
-            // Look for line that starts with /, that is the header
-            // Parse all data
-            // If line starts with !, stop parsing
-            // TODO: check CRC
-
-            var telegram = "";
+            var message = "";
 
             do
             {
@@ -75,13 +39,13 @@ namespace P1Dash.Dsmr
 
                 if (line == null) continue;
                 
-                if (line.StartsWith("/") || telegram.Length > 0)
+                if (line.StartsWith("/") || message.Length > 0)
                 {
-                    telegram += line + "\n";
+                    message += line + "\r\n";
                 }
-            } while (telegram.LastIndexOf("!") == -1);
+            } while (message.LastIndexOf("!") == -1);
 
-            return telegram;
+            return message;
         }
     }
 }

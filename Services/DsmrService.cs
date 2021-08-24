@@ -40,7 +40,7 @@ namespace P1Dash.Services
         {
             var telegram = _provider.Read();
 
-            if (telegram == null) return;
+            if (telegram is not { Valid: true }) return;
             
             foreach (var callback in Callbacks.ToList())
             {
