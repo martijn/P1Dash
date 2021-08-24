@@ -10,8 +10,8 @@ namespace P1Dash.Dsmr
         
         public SerialDsmrProvider()
         {
-            _port = new SerialPort("/dev/ttyUSB0", 115200);
-            //_port = new SerialPort("/dev/cu.usbserial-A640HB4X", 115200);
+            //_port = new SerialPort("/dev/ttyUSB0", 115200);
+            _port = new SerialPort("/dev/cu.usbserial-A640HB4X", 115200);
             _port.ReadTimeout = 1000;
             _port.RtsEnable = true;
             _port.Open();
@@ -41,7 +41,7 @@ namespace P1Dash.Dsmr
                 
                 if (line.StartsWith("/") || message.Length > 0)
                 {
-                    message += line + "\r\n";
+                    message += line + "\n";
                 }
             } while (message.LastIndexOf("!") == -1);
 
