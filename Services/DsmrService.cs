@@ -16,6 +16,7 @@ namespace P1Dash.Services
         private ILogger<DsmrService> _logger;
 
         public List<Update> Callbacks = new();
+        public List<P1Telegram> History = new();
 
         public DsmrService(ILogger<DsmrService> logger)
         {
@@ -41,6 +42,11 @@ namespace P1Dash.Services
             var telegram = _provider.Read();
 
             if (telegram is not { Valid: true }) return;
+
+            History.Add(telegram);
+
+            if (History.Count > 3660)
+                History = History.GetRange(History.Count - 3600, 3600);
             
             foreach (var callback in Callbacks.ToList())
             {

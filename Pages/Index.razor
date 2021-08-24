@@ -8,11 +8,11 @@
     
 <RadzenRadialGauge Style="width: 100%; height: 300px;">
     <RadzenRadialGaugeScale StartAngle="-150" EndAngle="150" Step="1" Min="-4" Max="8" TickPosition="GaugeTickPosition.Outside">
-        @if (_telegram != null)
+        @if (_guage != null)
         {
-            <RadzenRadialGaugeScalePointer Value=@_guage Length="0.6" ShowValue="true">
+            <RadzenRadialGaugeScalePointer Value=@_guage.Value Length="0.6" ShowValue="true">
                 <Template Context="pointer">
-                    <h4 class=@(@_guage < 0 ? "text-success" : "")>
+                    <h4 class=@(_guage < 0 ? "text-success" : "")>
                         @_guage kW
                     </h4>
                 </Template>
@@ -24,19 +24,22 @@
 
 @code
 {
-    private P1Telegram? _telegram;
-    private double _guage;
+    private double? _guage;
 
-    public async Task Update(P1Telegram t)
+    private async Task Update(P1Telegram? t)
     {
-        _telegram = t;
-        
-        if (_telegram != null) _guage = _telegram.ElectricityDelivered - _telegram.ElectricityReceived;
+        if (t != null) _guage = t.ElectricityDelivered - t.ElectricityReceived;
         
         await InvokeAsync(StateHasChanged);
     }
 
-    protected override void OnInitialized() => _dsmrService.Callbacks.Add(Update);
+    protected override async Task OnInitializedAsync()
+    {
+        if (_dsmrService.History.Count > 0)
+            await Update(_dsmrService.History.Last());
+        
+         _dsmrService.Callbacks.Add(Update);   
+    }
 
     public void Dispose() => _dsmrService.Callbacks.Remove(Update);
 }
