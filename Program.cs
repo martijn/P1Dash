@@ -19,7 +19,7 @@ builder.Services.AddServerSideBlazor();
 
 using (var serviceProvider = builder.Services.BuildServiceProvider())
 {
-    var dsmrService = new DsmrService(serviceProvider.GetService<ILogger<DsmrService>>());
+    var dsmrService = new DsmrService(serviceProvider.GetService<ILogger<DsmrService>>()!);
     builder.Services.AddSingleton<DsmrService>(dsmrService);
 }
 

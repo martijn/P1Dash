@@ -24,7 +24,7 @@ namespace P1Dash.Services
             {
                 _provider = new SerialDsmrProvider();
             }
-            catch (System.UnauthorizedAccessException e)
+            catch (System.UnauthorizedAccessException)
             { 
                 _logger.LogInformation("Cannot connect to serial port, falling back to network");
                 _provider = new TcpDsmrProvider();

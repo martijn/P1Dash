@@ -31,7 +31,7 @@ namespace P1Dash.Dsmr
                 {
                     line = _port.ReadLine();
                 }
-                catch (TimeoutException e)
+                catch (TimeoutException)
                 {
                     Console.WriteLine("Timeout while reading from serial port");
                     line = null;
