@@ -15,5 +15,6 @@ RUN dotnet publish "P1Dash.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
+VOLUME /app/Storage
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "P1Dash.dll"]

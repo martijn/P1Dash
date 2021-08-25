@@ -1,9 +1,15 @@
+using System;
+using System.IO;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.RenderTree;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using P1Dash;
+using P1Dash.Dsmr;
+using P1Dash.Models;
 using P1Dash.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,16 +18,24 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 
-// TODO
-// Determine what source to use and add corresponding IDsmrProvider
-// DsmrService gets IDsmrProvider from DI container
-// No more temp serviceProvider for logging necessary
+Directory.CreateDirectory("./Storage");
+builder.Configuration.AddJsonFile("./Storage/settings.json", true);
 
-using (var serviceProvider = builder.Services.BuildServiceProvider())
+builder.Services.Configure<AppOptions>(builder.Configuration.GetSection("AppOptions"));
+
+var appOptions = builder.Configuration.GetSection("AppOptions").Get<AppOptions>() ?? new AppOptions();
+
+switch (appOptions.Provider)
 {
-    var dsmrService = new DsmrService(serviceProvider.GetService<ILogger<DsmrService>>()!);
-    builder.Services.AddSingleton<DsmrService>(dsmrService);
-}
+    case AppOptions.ProviderType.Serial:
+        builder.Services.AddSingleton<IDsmrProvider, SerialDsmrProvider>();
+        break;
+    case AppOptions.ProviderType.Tcp:
+        builder.Services.AddSingleton<IDsmrProvider, TcpDsmrProvider>();
+        break;
+};
+
+builder.Services.AddSingleton<DsmrService>();
 
 var app = builder.Build();
 

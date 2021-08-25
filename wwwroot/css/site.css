@@ -4,6 +4,35 @@ html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
+body {
+    text-align: center;
+}
+
+.home-btn a, .settings-btn a
+{
+    color: gray;
+}
+
+.home-btn {
+    position: absolute;
+    left: 15px;
+    top: 15px;
+}
+
+.settings-btn {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+}
+
+.home-btn a.active {
+    display: none;
+}
+
+.settings-btn a.active {
+    color: black;
+}
+
 a, .btn-link {
     color: #0077cc;
 }

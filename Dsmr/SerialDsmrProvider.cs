@@ -1,6 +1,8 @@
 using System;
 using System.IO.Ports;
 using System.Text.RegularExpressions;
+using Microsoft.Extensions.Options;
+using P1Dash.Models;
 
 namespace P1Dash.Dsmr
 {
@@ -8,13 +10,24 @@ namespace P1Dash.Dsmr
     {
         private SerialPort _port;
         
-        public SerialDsmrProvider()
+        public bool Connected { get; } = false;
+        public string? Error { get; }
+        
+        public SerialDsmrProvider(IOptions<AppOptions> options)
         {
-            _port = new SerialPort("/dev/ttyUSB0", 115200);
-            //_port = new SerialPort("/dev/cu.usbserial-A640HB4X", 115200);
-            _port.ReadTimeout = 1000;
-            _port.RtsEnable = true;
-            _port.Open();
+            try
+            {
+                _port = new SerialPort(options.Value.SerialPort, 115200);
+                _port.ReadTimeout = 1000;
+                _port.RtsEnable = true;
+                _port.Open();
+
+                Connected = true;
+            }
+            catch (UnauthorizedAccessException e)
+            {
+                Error = e.Message;
+            }
         }
 
         public P1Telegram? Read() => new P1Telegram(FetchMessage());

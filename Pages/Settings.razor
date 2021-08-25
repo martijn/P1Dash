@@ -1,0 +1,62 @@
+@page "/Settings"
+@using Microsoft.Extensions.Hosting
+@using System.Text.Json
+@using System.IO
+@using Microsoft.Extensions.Options
+@inject IHostApplicationLifetime AppLifetime
+@inject IOptions<AppOptions> _options
+
+<EditForm Model="@_appOptions" OnValidSubmit="@SaveAndRestart">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    
+    <div class="form-check form-check-inline">
+        <label class="form-check-label">
+            <div>DSMR Connection</div>
+            <InputRadioGroup @bind-Value="_appOptions.Provider">
+                @foreach (var provider in (AppOptions.ProviderType[])Enum.GetValues(typeof(AppOptions.ProviderType)))
+                {
+                    <InputRadio Value="provider" class="form-check-input" />
+                    @provider
+                    <text>&nbsp;</text>
+                }
+             </InputRadioGroup>
+        </label>
+    </div>
+    
+    <div class="form-group">
+        <label>
+            Serial port (device path or COMx)
+            <InputText @bind-Value="_appOptions.SerialPort" class="form-control" />
+        </label>
+    </div>
+    
+    <div class="form-group">
+        <label>
+            Tcp Address (host:port)
+            <InputText @bind-Value="_appOptions.TcpAddress" class="form-control" />
+        </label>
+    </div>
+    
+    <p>
+        <button class="btn btn-light" @onclick="() => _appOptions = new AppOptions()">Reset to defaults</button>
+        <button class="btn btn-primary" type="submit">Save & Restart</button>
+    </p>
+</EditForm>
+
+@code {
+    private AppOptions _appOptions;
+
+    protected override void OnInitialized()
+    {
+        _appOptions = _options.Value;
+    }
+
+    private async Task SaveAndRestart(EditContext arg)
+    {
+        await File.WriteAllTextAsync("./Storage/settings.json", JsonSerializer.Serialize(new { AppOptions = _appOptions }));
+
+        AppLifetime.StopApplication();
+    }
+
+}

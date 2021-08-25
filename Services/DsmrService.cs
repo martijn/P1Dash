@@ -18,18 +18,10 @@ namespace P1Dash.Services
         public List<Update> Callbacks = new();
         public List<P1Telegram> History = new();
 
-        public DsmrService(ILogger<DsmrService> logger)
+        public DsmrService(ILogger<DsmrService> logger, IDsmrProvider provider)
         {
             _logger = logger;
-            try
-            {
-                _provider = new SerialDsmrProvider();
-            }
-            catch (System.UnauthorizedAccessException)
-            { 
-                _logger.LogInformation("Cannot connect to serial port, falling back to network");
-                _provider = new TcpDsmrProvider();
-            }
+            _provider = provider;
             
             _timer = new System.Timers.Timer(1000);
             _timer.Elapsed += Interval;
@@ -39,6 +31,8 @@ namespace P1Dash.Services
 
         private void Interval(object? source, ElapsedEventArgs e)
         {
+            if (!_provider.Connected) return;
+            
             var telegram = _provider.Read();
 
             if (telegram is not { Valid: true }) return;

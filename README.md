@@ -8,15 +8,21 @@ power consumed from or fed back to the grid in real time.
 
 ## Run with Docker
 
-With FTDI cable connected as /dev/ttyUSB0
+P1 Dash can connect either through a local serial port (using a suitable FTDI
+serial cable) or to a TCP socket served by ser2net or a dedicated smart meter
+interface.
+
+Build and run P1 Dash by cloning the repostory and executing the following commands:
 
 ```
+git clone https://github.com/martijn/P1Dash.git
+cd P1Dash
+
 docker build -t p1dash .
-docker run -p 5000:5000 --device /dev/ttyUSB0 p1dash
+docker run -d --name p1dash -p 5000:5000 --restart=always -v p1dash-storage:/app/Storage --device /dev/ttyUSB0 p1dash
 ```
 
-If a serial port is not available, DSMR data can be consumed from
-any TCP socket, serviced by something like ser2net or a dedicated
-smart meter interface.
+If you intend to use a TCP socket you can omit the `--device /dev/ttyUSB0` part.
 
-Configuration is not yet available.
+After startup, visit `http://localhost:5000` and click the cog icon to access the settings.
+dialog in the applciation.
