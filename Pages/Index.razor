@@ -21,6 +21,13 @@
     </RadzenRadialGaugeScale>
 </RadzenRadialGauge>
 
+@if (_oldest != null)
+{
+    <p>
+        Average since @(_oldest.Value.ToString("hh:mm")):<br />@_average.ToString("N3") kW.
+    </p>
+}
+
 @if (!_dsmrProvider.Connected)
 {
     <h4>Connection error</h4>
@@ -35,10 +42,15 @@
 @code
 {
     private double? _guage;
+    private double _average = 0.0;
+    private DateTime? _oldest;
 
     private async Task Update(P1Telegram? t)
     {
         if (t != null) _guage = t.ElectricityDelivered - t.ElectricityReceived;
+
+        _average = _dsmrService.History.Average(t => t.ElectricityDelivered - t.ElectricityReceived);
+        _oldest = _dsmrService.History.First().Timestamp;
         
         await InvokeAsync(StateHasChanged);
     }
