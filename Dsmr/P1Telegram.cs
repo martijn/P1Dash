@@ -24,7 +24,7 @@ namespace P1Dash.Dsmr
         
         public bool Valid { get; set; }
         public int DsmrVersion => int.Parse(Fields["1-3:0.2.8"]);
-        public DateTime Timestamp => DateTime.ParseExact(Fields["0-0:1.0.0"].Remove(12, 1), "yyMMddhhmmss", CultureInfo.InvariantCulture);
+        public DateTime Timestamp => DateTime.ParseExact(Fields["0-0:1.0.0"].Remove(12, 1), "yyMMddHHmmss", CultureInfo.InvariantCulture);
         public double ElectricityDelivered => double.Parse(Fields["1-0:1.7.0"].Split("*").First());
         public double ElectricityReceived => double.Parse(Fields["1-0:2.7.0"].Split("*").First());
 
