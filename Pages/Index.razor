@@ -1,18 +1,18 @@
 @page "/"
 @inject DsmrService _dsmrService
 @inject IDsmrProvider _dsmrProvider
-@using P1Dash.Dsmr
 @using P1Dash.Services
+@using P1Dash.Dsmr
 @implements IDisposable
-    
+
 <RadzenRadialGauge Style="width: 100%; height: 300px;">
     <RadzenRadialGaugeScale StartAngle="-150" EndAngle="150" Step="1" Min="-4" Max="8" TickPosition="GaugeTickPosition.Outside">
-        @if (_guage != null)
+        @if (_gauge != null)
         {
-            <RadzenRadialGaugeScalePointer Value=@_guage.Value Length="0.6" ShowValue="true">
+            <RadzenRadialGaugeScalePointer Value=@_gauge.Value Length="0.6" ShowValue="true">
                 <Template Context="pointer">
-                    <h4 class=@(_guage < 0 ? "text-success" : "")>
-                        @_guage kW
+                    <h4 class=@(_gauge < 0 ? "text-success" : "")>
+                        @_gauge kW
                     </h4>
                 </Template>
             </RadzenRadialGaugeScalePointer>
@@ -24,7 +24,7 @@
 @if (_oldest != null)
 {
     <p>
-        Average since @(_oldest.Value.ToString("HH:mm")):<br />@_average.ToString("N3") kW
+        Average since @(_oldest.Value.ToString("HH:mm")):<br/>@_average.ToString("N3") kW
     </p>
 }
 
@@ -41,17 +41,17 @@
 
 @code
 {
-    private double? _guage;
-    private double _average = 0.0;
+    private double? _gauge;
+    private double _average;
     private DateTime? _oldest;
 
     private async Task Update(P1Telegram? t)
     {
-        if (t != null) _guage = t.ElectricityDelivered - t.ElectricityReceived;
+        if (t != null) _gauge = t.ElectricityDelivered - t.ElectricityReceived;
 
-        _average = _dsmrService.History.Average(t => t.ElectricityDelivered - t.ElectricityReceived);
+        _average = _dsmrService.History.ToList().Average(t => t.ElectricityDelivered - t.ElectricityReceived);
         _oldest = _dsmrService.History.First().Timestamp;
-        
+
         await InvokeAsync(StateHasChanged);
     }
 
@@ -59,9 +59,12 @@
     {
         if (_dsmrService.History.Count > 0)
             await Update(_dsmrService.History.Last());
-        
-         _dsmrService.Callbacks.Add(Update);   
+
+        _dsmrService.Callbacks.Add(Update);
     }
 
-    public void Dispose() => _dsmrService.Callbacks.Remove(Update);
+    public void Dispose()
+    {
+        _dsmrService.Callbacks.Remove(Update);
+    }
 }

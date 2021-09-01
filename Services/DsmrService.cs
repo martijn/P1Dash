@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Threading.Tasks;
 using System.Timers;
 using Microsoft.Extensions.Logging;
@@ -10,9 +11,10 @@ namespace P1Dash.Services
     public class DsmrService
     {
         public delegate Task Update(P1Telegram t);
-        
-        private IDsmrProvider _provider;
-        private System.Timers.Timer _timer;
+
+        private readonly IDsmrProvider _provider;
+        private readonly System.Timers.Timer _timer;
+
         private ILogger<DsmrService> _logger;
 
         public List<Update> Callbacks = new();
@@ -22,7 +24,7 @@ namespace P1Dash.Services
         {
             _logger = logger;
             _provider = provider;
-            
+
             _timer = new System.Timers.Timer(1000);
             _timer.Elapsed += Interval;
             _timer.AutoReset = true;
@@ -32,7 +34,7 @@ namespace P1Dash.Services
         private void Interval(object? source, ElapsedEventArgs e)
         {
             if (!_provider.Connected) return;
-            
+
             var telegram = _provider.Read();
 
             if (telegram is not { Valid: true }) return;
@@ -41,11 +43,8 @@ namespace P1Dash.Services
 
             if (History.Count > 3660)
                 History = History.GetRange(History.Count - 3600, 3600);
-            
-            foreach (var callback in Callbacks.ToList())
-            {
-                callback(telegram);
-            }
+
+            foreach (var callback in Callbacks.ToList()) callback(telegram);
         }
     }
 }

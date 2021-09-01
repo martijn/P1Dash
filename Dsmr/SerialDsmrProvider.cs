@@ -1,6 +1,5 @@
 using System;
 using System.IO.Ports;
-using System.Text.RegularExpressions;
 using Microsoft.Extensions.Options;
 using P1Dash.Models;
 
@@ -8,11 +7,8 @@ namespace P1Dash.Dsmr
 {
     public class SerialDsmrProvider : IDsmrProvider
     {
-        private SerialPort _port;
-        
-        public bool Connected { get; } = false;
-        public string? Error { get; }
-        
+        private readonly SerialPort? _port;
+
         public SerialDsmrProvider(IOptions<AppOptions> options)
         {
             try
@@ -30,15 +26,23 @@ namespace P1Dash.Dsmr
             }
         }
 
-        public P1Telegram? Read() => new P1Telegram(FetchMessage());
-        
+        public bool Connected { get; }
+        public string? Error { get; }
+
+        public P1Telegram? Read()
+        {
+            return new P1Telegram(FetchMessage());
+        }
+
         private string FetchMessage()
         {
             var message = "";
 
+            if (_port == null) return message;
+
             do
             {
-                string? line;
+                string? line = null;
 
                 try
                 {
@@ -51,11 +55,8 @@ namespace P1Dash.Dsmr
                 }
 
                 if (line == null) continue;
-                
-                if (line.StartsWith("/") || message.Length > 0)
-                {
-                    message += line + "\n";
-                }
+
+                if (line.StartsWith("/") || message.Length > 0) message += line + "\n";
             } while (message.LastIndexOf("!") == -1);
 
             return message;

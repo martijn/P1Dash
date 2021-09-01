@@ -4,13 +4,13 @@ namespace P1Dash.Models
 {
     public class AppOptions
     {
-        public const string App = "App";
-        
-        public enum ProviderType : int
+        public enum ProviderType
         {
             Serial = 1,
             Tcp = 2
         }
+
+        public const string App = "App";
 
         [Required] public ProviderType Provider { get; set; } = ProviderType.Serial;
 

@@ -1,13 +1,8 @@
-using System;
 using System.IO;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.RenderTree;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using P1Dash;
 using P1Dash.Dsmr;
 using P1Dash.Models;
 using P1Dash.Services;
@@ -33,7 +28,9 @@ switch (appOptions.Provider)
     case AppOptions.ProviderType.Tcp:
         builder.Services.AddSingleton<IDsmrProvider, TcpDsmrProvider>();
         break;
-};
+}
+
+;
 
 builder.Services.AddSingleton<DsmrService>();
 
@@ -41,13 +38,9 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
-{
     app.UseDeveloperExceptionPage();
-}
 else
-{
     app.UseExceptionHandler("/Error");
-}
 
 app.UseStaticFiles();
 
