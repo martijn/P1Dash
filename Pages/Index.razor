@@ -26,6 +26,8 @@
     <p>
         Average since @(_oldest.Value.ToString("HH:mm")):<br/>@_average.ToString("N3") kW
     </p>
+
+    <LineChart Max="8" Min="-4" Values="@_dsmrService.History.ToList().Select(t => t.ElectricityBalance).ToList()"/>
 }
 
 @if (!_dsmrProvider.Connected)
@@ -47,9 +49,9 @@
 
     private async Task Update(P1Telegram? t)
     {
-        if (t != null) _gauge = t.ElectricityDelivered - t.ElectricityReceived;
+        if (t != null) _gauge = t.ElectricityBalance;
 
-        _average = _dsmrService.History.ToList().Average(t => t.ElectricityDelivered - t.ElectricityReceived);
+        _average = _dsmrService.History.ToList().Average(t => t.ElectricityBalance);
         _oldest = _dsmrService.History.First().Timestamp;
 
         await InvokeAsync(StateHasChanged);

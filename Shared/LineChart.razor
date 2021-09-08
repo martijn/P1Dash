@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 @(GraphWidth + 100) @GraphHeight">
+    <g>
+        <text x="40" y="@ZeroY" stroke="gray" text-anchor="end">0</text>
+        <text x="40" y="15" stroke="gray" text-anchor="end">@Max</text>
+        <text x="40" y="@GraphHeight" stroke="green" text-anchor="end">@Min</text>
+        <line x1="50" x2="50" y1="0" y2="200" stroke="gray" />
+        <line x1="50" x2="@(GraphWidth + 50)" y1="@ZeroY" y2="@ZeroY" stroke="gray" />
+    </g>
+    <g>
+        <polyline stroke="blue" fill="none" points="@PointList" />
+    </g>
+</svg>
+
+@code {
+    [Parameter]
+    public double Max { get; set; }
+
+    [Parameter]
+    public double Min { get; set; }
+
+    [Parameter]
+    public List<double> Values { get; set; }
+
+    private const double GraphHeight = 200.0;
+    private const double GraphWidth = 350.0;
+
+    private double GraphRange => Math.Abs(Max) + Math.Abs(Min);
+    private double ZeroY => (Math.Abs(Max) / GraphRange) * GraphHeight;
+    private double PointSpacing => GraphWidth / (Values.Count - 1);
+
+    private string PointList =>
+        String.Join(" ",
+            Values.Select(
+                (y, index) => $"{50 + index * PointSpacing},{ZeroY - y * GraphRange}"
+            )
+        );
+}

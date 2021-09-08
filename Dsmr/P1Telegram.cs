@@ -29,6 +29,8 @@ namespace P1Dash.Dsmr
         public double ElectricityDelivered => double.Parse(Fields["1-0:1.7.0"].Split("*").First());
         public double ElectricityReceived => double.Parse(Fields["1-0:2.7.0"].Split("*").First());
 
+        public double ElectricityBalance => ElectricityDelivered - ElectricityReceived;
+
         private Dictionary<string, string> Fields { get; } = new();
 
         private static bool IsValidMessage(string message)
