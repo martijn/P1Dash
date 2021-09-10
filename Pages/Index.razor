@@ -27,7 +27,7 @@
         Average since @(_oldest.Value.ToString("HH:mm")):<br/>@_average.ToString("N3") kW
     </p>
 
-    <LineChart Max="8" Min="-4" Values="@_dsmrService.History.ToList().Select(t => t.ElectricityBalance).ToList()"/>
+    <LineChart Values="@_dsmrService.History.ToList().Select(t => t.ElectricityBalance).ToList()"/>
 }
 
 @if (!_dsmrProvider.Connected)

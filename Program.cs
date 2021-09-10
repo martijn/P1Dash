@@ -20,6 +20,9 @@ builder.Services.Configure<AppOptions>(builder.Configuration.GetSection("AppOpti
 
 var appOptions = builder.Configuration.GetSection("AppOptions").Get<AppOptions>() ?? new AppOptions();
 
+#if DEBUG
+builder.Services.AddSingleton<IDsmrProvider, DummyDsmrProvider>();
+#else
 switch (appOptions.Provider)
 {
     case AppOptions.ProviderType.Serial:
@@ -31,6 +34,7 @@ switch (appOptions.Provider)
 }
 
 ;
+#endif
 
 builder.Services.AddSingleton<DsmrService>();
 

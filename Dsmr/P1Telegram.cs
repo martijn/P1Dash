@@ -35,12 +35,17 @@ namespace P1Dash.Dsmr
 
         private static bool IsValidMessage(string message)
         {
+            return Regex.Match(message, "!(.{4})").Groups[1].Value == MessageChecksum(message);
+        }
+
+        public static string MessageChecksum(string message)
+        {
             var crc = new Crc("CRC-16/DSMR", 16, 0x8005, 0x0000, true, true, 0x0, 0x4B37);
 
             crc.Append(
                 Encoding.ASCII.GetBytes(Regex.Match(message, "(/.*?!)", RegexOptions.Singleline).Groups[1].Value));
 
-            return Regex.Match(message, "!(.{4})").Groups[1].Value == crc.ToHexString();
+            return crc.ToHexString();
         }
     }
 }
