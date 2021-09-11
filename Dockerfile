@@ -8,10 +8,10 @@ COPY ["P1Dash.csproj", "./"]
 RUN dotnet restore "P1Dash.csproj"
 COPY . .
 WORKDIR "/src/"
-RUN dotnet build "P1Dash.csproj" -c Release -o /app/build
+RUN dotnet build "P1Dash.csproj" --no-restore -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "P1Dash.csproj" -c Release -o /app/publish
+RUN dotnet publish "P1Dash.csproj" --no-restore -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
