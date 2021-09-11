@@ -27,7 +27,7 @@
         Average since @(_oldest.Value.ToString("HH:mm")):<br/>@_average.ToString("N3") kW
     </p>
 
-    <LineChart Values="@_dsmrService.History.ToList().Select(t => t.ElectricityBalance).ToList()"/>
+    <LineChart Values="@_historyData"/>
 }
 
 @if (!_dsmrProvider.Connected)
@@ -46,6 +46,7 @@
     private double? _gauge;
     private double _average;
     private DateTime? _oldest;
+    private List<double> _historyData = new();
 
     private async Task Update(P1Telegram? t)
     {
@@ -53,6 +54,16 @@
 
         _average = _dsmrService.History.ToList().Average(t => t.ElectricityBalance);
         _oldest = _dsmrService.History.First().Timestamp;
+
+        _historyData = _dsmrService.History.ToList().Select(t => t.ElectricityBalance).ToList();
+
+        // Limit graph resolution to approx 300 data points to avoid performance issues
+        if (_historyData.Count > 300)
+        {
+            var chunkSize = _historyData.Count / 300;
+            //_historyData = _historyData.Chunk(chunkSize).Select(c => c.Average()).ToList();
+            _historyData = _historyData.Where((n, i) => i % chunkSize == 0).ToList();
+        }
 
         await InvokeAsync(StateHasChanged);
     }
