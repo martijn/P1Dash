@@ -1,9 +1,11 @@
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using P1Dash;
 using P1Dash.Dsmr;
 using P1Dash.Models;
 using P1Dash.Services;
@@ -57,8 +59,8 @@ app.MapFallbackToPage("/_Host");
 // Prometheus-compatible metrics endpoint
 app.MapGet("/metrics",
     (DsmrService dsmrService) =>
-        $@"# HELP p1dash_electricity_balance Electricity consumed and/or delivered
-# TYPE p1dash_electricity_balance gauge
-p1dash_electricity_balance_kw {dsmrService.History.Last().ElectricityBalance}");
+        Util.FormatMetric("p1dash_electricity_balance", "gauge",
+            dsmrService.History.Last().ElectricityBalance.ToString(CultureInfo.InvariantCulture),
+            "Electricity consumed and/or delivered"));
 
 app.Run();
