@@ -1,50 +1,48 @@
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.AccessControl;
 using System.Threading.Tasks;
 using System.Timers;
 using Microsoft.Extensions.Logging;
 using P1Dash.Dsmr;
 
-namespace P1Dash.Services
+namespace P1Dash.Services;
+
+public class DsmrService
 {
-    public class DsmrService
+    public delegate Task Update(P1Telegram t);
+
+    private readonly IDsmrProvider _provider;
+    private readonly Timer _timer;
+
+    private ILogger<DsmrService> _logger;
+
+    public List<Update> Callbacks = new();
+    public List<P1Telegram> History = new();
+
+    public DsmrService(ILogger<DsmrService> logger, IDsmrProvider provider)
     {
-        public delegate Task Update(P1Telegram t);
+        _logger = logger;
+        _provider = provider;
 
-        private readonly IDsmrProvider _provider;
-        private readonly System.Timers.Timer _timer;
+        _timer = new Timer(1000);
+        _timer.Elapsed += Interval;
+        _timer.AutoReset = true;
+        _timer.Enabled = true;
+    }
 
-        private ILogger<DsmrService> _logger;
+    private void Interval(object? source, ElapsedEventArgs e)
+    {
+        if (!_provider.Connected) return;
 
-        public List<Update> Callbacks = new();
-        public List<P1Telegram> History = new();
+        var telegram = _provider.Read();
 
-        public DsmrService(ILogger<DsmrService> logger, IDsmrProvider provider)
-        {
-            _logger = logger;
-            _provider = provider;
+        if (telegram is not { Valid: true }) return;
 
-            _timer = new System.Timers.Timer(1000);
-            _timer.Elapsed += Interval;
-            _timer.AutoReset = true;
-            _timer.Enabled = true;
-        }
+        History.Add(telegram);
 
-        private void Interval(object? source, ElapsedEventArgs e)
-        {
-            if (!_provider.Connected) return;
+        if (History.Count > 3660)
+            History = History.GetRange(History.Count - 3600, 3600);
 
-            var telegram = _provider.Read();
-
-            if (telegram is not { Valid: true }) return;
-
-            History.Add(telegram);
-
-            if (History.Count > 3660)
-                History = History.GetRange(History.Count - 3600, 3600);
-
-            foreach (var callback in Callbacks.ToList()) callback(telegram);
-        }
+        foreach (var callback in Callbacks.ToList()) callback(telegram);
     }
 }

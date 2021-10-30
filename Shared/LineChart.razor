@@ -12,14 +12,15 @@
 </svg>
 
 @code {
+
     [Parameter]
     public List<double> Values { get; set; }
 
     private double MaxValue => Values.Max() > 1 ? Math.Ceiling(Values.Max()) : 1.0;
     private double MinValue => Values.Min() < -1 ? Math.Floor(Values.Min()) : -1;
 
-    private const double GraphHeight = 200.0;
-    private const double GraphWidth = 350.0;
+        private const double GraphHeight = 200.0;
+        private const double GraphWidth = 350.0;
 
     private double GraphRange => Math.Abs(MaxValue) + Math.Abs(MinValue);
     private double ZeroY => Math.Abs(MaxValue) / GraphRange * GraphHeight;

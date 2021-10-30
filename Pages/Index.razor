@@ -57,11 +57,11 @@
 
         _historyData = _dsmrService.History.ToList().Select(t => t.ElectricityBalance).ToList();
 
-        // Limit graph resolution to approx 300 data points to avoid performance issues
+    // Limit graph resolution to approx 300 data points to avoid performance issues
         if (_historyData.Count > 300)
         {
             var chunkSize = _historyData.Count / 300;
-            //_historyData = _historyData.Chunk(chunkSize).Select(c => c.Average()).ToList();
+    //_historyData = _historyData.Chunk(chunkSize).Select(c => c.Average()).ToList();
             _historyData = _historyData.Where((n, i) => i % chunkSize == 0).ToList();
         }
 

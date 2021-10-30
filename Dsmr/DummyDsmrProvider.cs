@@ -1,25 +1,24 @@
 using System;
 
-namespace P1Dash.Dsmr
+namespace P1Dash.Dsmr;
+
+public class DummyDsmrProvider : IDsmrProvider
 {
-    public class DummyDsmrProvider :  IDsmrProvider
+    private readonly Random _randomGen = new();
+
+    private double Balance { get; set; }
+    public bool Connected { get; } = true;
+
+    public string? Error { get; } = null;
+
+    public P1Telegram? Read()
     {
-        public bool Connected { get; } = true;
+        Balance = Balance - 0.5 + _randomGen.NextDouble();
 
-        public string? Error { get; } = null;
+        var delivered = Balance > 0 ? Balance : 0.0;
+        var received = Balance < 0 ? Math.Abs(Balance) : 0.0;
 
-        private double Balance { get; set; }
-        
-        private readonly Random _randomGen = new();
-
-        public P1Telegram? Read()
-        {
-            Balance = Balance - 0.5 + _randomGen.NextDouble();
-
-            double delivered = Balance > 0 ? Balance : 0.0;
-            double received = Balance < 0 ? Math.Abs(Balance) : 0.0;
-
-            var template = $@"/Dum5\XS210 ESMR 5.0
+        var template = $@"/Dum5\XS210 ESMR 5.0
 
 1-3:0.2.8(50)
 0-0:1.0.0({DateTime.Now:yyMMddHHmmss}S)
@@ -46,9 +45,8 @@ namespace P1Dash.Dsmr
 0-1:24.2.1(210910144000S)(02658.345*m3)
 !";
 
-            template += P1Telegram.MessageChecksum(template);
+        template += P1Telegram.MessageChecksum(template);
 
-            return new P1Telegram(template);
-        }
+        return new P1Telegram(template);
     }
 }
