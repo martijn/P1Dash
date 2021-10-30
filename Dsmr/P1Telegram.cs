@@ -16,7 +16,7 @@ public class P1Telegram
 
         // Extract all fields in the telegram by regex
         // Note that this only captures the first value for each OBIS code currently
-        foreach (Match match in Regex.Matches(message, @"(\d+-\d+:\d+\.\d+\.\d+)\((.*?)\)"))
+        foreach (Match match in Regex.Matches(message, @"(\d+-\d+:\d+\.\d+\.\d+)\((.*?)\)(\r|\n)"))
             Fields[match.Groups[1].Value] = match.Groups[2].Value;
     }
 
@@ -28,6 +28,7 @@ public class P1Telegram
 
     public double ElectricityDelivered => double.Parse(Fields["1-0:1.7.0"].Split("*").First());
     public double ElectricityReceived => double.Parse(Fields["1-0:2.7.0"].Split("*").First());
+    public double GasDelivered => double.Parse(Fields["0-1:24.2.1"].Split(")(").Last().Split("*").First());
 
     public double ElectricityBalance => ElectricityDelivered - ElectricityReceived;
 
