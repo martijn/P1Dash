@@ -59,7 +59,7 @@ app.MapFallbackToPage("/_Host");
 // Prometheus-compatible metrics endpoint
 app.MapGet("/metrics",
     (DsmrService dsmrService) =>
-        Util.FormatMetric("p1dash_electricity_balance_kwh", "gauge",
+        Util.FormatMetric("p1dash_electricity_balance_kw", "gauge",
             dsmrService.History.Last().ElectricityBalance,
             "Electricity consumed and/or delivered") +
         Util.FormatMetric("p1dash_gas_delivered_m3", "counter",
