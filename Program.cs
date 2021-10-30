@@ -1,4 +1,5 @@
 using System.IO;
+using System.Linq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -52,5 +53,12 @@ app.UseRouting();
 
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
+
+// Prometheus-compatible metrics endpoint
+app.MapGet("/metrics",
+    (DsmrService dsmrService) =>
+        $@"# HELP p1dash_electricity_balance Electricity consumed and/or delivered
+# TYPE p1dash_electricity_balance gauge
+p1dash_electricity_balance_kw {dsmrService.History.Last().ElectricityBalance}");
 
 app.Run();

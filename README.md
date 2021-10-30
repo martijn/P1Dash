@@ -5,6 +5,9 @@
 A simple web interface for the Dutch Smart Meter reader (DSMR/ESMR v5). Right now it does only one thing; display a
 guage to show you the power consumed from or fed back to the grid in real time.
 
+Also exposes the current gauge value in a Prometheus-compatible format on the /metrics endpoint
+to allow persisting P1 electricity measurements externally and graphing with something like Grafana.
+
 ## Run with Docker
 
 P1 Dash can connect either through a local serial port (using a suitable FTDI serial cable) or to a TCP socket served by
