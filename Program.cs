@@ -64,7 +64,10 @@ app.MapGet("/metrics",
             "Electricity consumed and/or delivered") +
         Util.FormatMetric("p1dash_gas_delivered_m3", "counter",
             dsmrService.History.Last().GasDelivered,
-            "Gas delivered to client in m3 (5 minute interval)")
+            "Gas delivered to client in m3 (5 minute interval)") +
+        Util.FormatMetric("p1dash_voltage_l1", "gauge",
+            dsmrService.History.Last().VoltageL1,
+            "Instantaneous voltage L1")
         );
 
 app.Run();

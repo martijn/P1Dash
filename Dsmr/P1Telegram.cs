@@ -28,6 +28,7 @@ public class P1Telegram
     public double ElectricityDelivered => double.Parse(Fields["1-0:1.7.0"]);
     public double ElectricityReceived => double.Parse(Fields["1-0:2.7.0"]);
     public double GasDelivered => double.Parse(Fields["0-1:24.2.1"]);
+    public double VoltageL1 => double.Parse(Fields["1-0:32.7.0"]);
 
     public double ElectricityBalance => ElectricityDelivered - ElectricityReceived;
 
