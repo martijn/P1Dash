@@ -3,18 +3,18 @@
         <text x="40" y="@ZeroY" stroke="gray" text-anchor="end">0</text>
         <text x="40" y="15" stroke="gray" text-anchor="end">@MaxValue</text>
         <text x="40" y="@GraphHeight" stroke="green" text-anchor="end">@MinValue</text>
-        <line x1="50" x2="50" y1="0" y2="200" stroke="gray"/>
-        <line x1="50" x2="@(GraphWidth + 50)" y1="@ZeroY" y2="@ZeroY" stroke="gray"/>
+        <line x1="50" x2="50" y1="0" y2="200" stroke="gray" />
+        <line x1="50" x2="@(GraphWidth + 50)" y1="@ZeroY" y2="@ZeroY" stroke="gray" />
     </g>
     <g>
-        <polyline stroke="blue" fill="none" points="@PointList"/>
+        <polyline stroke="blue" fill="none" points="@PointList" />
     </g>
 </svg>
 
 @code {
 
     [Parameter]
-    public List<double> Values { get; set; }
+    public List<double> Values { get; set; } = new();
 
     private double MaxValue => Values.Max() > 1 ? Math.Ceiling(Values.Max()) : 1.0;
     private double MinValue => Values.Min() < -1 ? Math.Floor(Values.Min()) : -1;

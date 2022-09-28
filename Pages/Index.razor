@@ -17,17 +17,17 @@
                 </Template>
             </RadzenRadialGaugeScalePointer>
         }
-        <RadzenRadialGaugeScaleRange From="-4" To="0" Fill="green"/>
+        <RadzenRadialGaugeScaleRange From="-4" To="0" Fill="green" />
     </RadzenRadialGaugeScale>
 </RadzenRadialGauge>
 
 @if (_oldest != null)
 {
     <p>
-        Average since @(_oldest.Value.ToString("HH:mm")):<br/>@_average.ToString("N3") kW
+        Average since @(_oldest.Value.ToString("HH:mm")):<br />@_average.ToString("N3") kW
     </p>
 
-    <LineChart Values="@_historyData"/>
+    <LineChart Values="@_historyData" />
 }
 
 @if (!_dsmrProvider.Connected)
